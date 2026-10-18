@@ -4,6 +4,9 @@ import { loadEnvConfig } from "@next/env";
 // `yarn build` runs this before Next.js sets NODE_ENV to production.
 const development = process.env.NODE_ENV === "development";
 const { loadedEnvFiles } = loadEnvConfig(process.cwd(), development);
+// Require after env loading so a local FRONTEND_DEMO_MODE=false is respected.
+const { frontendDemoEnabled, applyFrontendDemoEnvironment } = require("../../config/frontend-demo.cjs");
+applyFrontendDemoEnvironment();
 
 if (loadedEnvFiles.length > 0) {
   console.log(`Loaded environment files: ${loadedEnvFiles.map((file) => file.path).join(", ")}`);
@@ -46,7 +49,9 @@ if (contentfulEnvs.some(hasValue)) {
   console.log("Contentful is not configured; CMS integration is disabled.");
 }
 
-if (missing.length > 0) {
+if (frontendDemoEnabled) {
+  console.log("Frontend demo mode: using dummy credentials. Database, email, authentication, and submissions are disabled.");
+} else if (missing.length > 0) {
   console.error(
     [
       "Environment validation failed. Missing required variables:",

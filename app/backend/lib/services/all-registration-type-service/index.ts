@@ -1,10 +1,12 @@
 import mongoConnection from "../../db/db-config";
+import { frontendDemoEnabled } from "@/config/frontend-demo.cjs";
 import AllRegistrationServiceTypeModel, {
   RegistrationServiceType,
 } from "../../db/models/all_registration_services.model";
 
 export default class AllRegistrationTypeServices {
   async getServiceByName(serviceName: RegistrationServiceType) {
+    if (frontendDemoEnabled) return null;
     try {
       await mongoConnection.connect();
       const service = AllRegistrationServiceTypeModel.findOne({
@@ -26,6 +28,7 @@ export default class AllRegistrationTypeServices {
   }
 
   async getAllRunningServices() {
+    if (frontendDemoEnabled) return [];
     try {
       await mongoConnection.connect();
       const result = await AllRegistrationServiceTypeModel.find(
@@ -40,6 +43,7 @@ export default class AllRegistrationTypeServices {
     }
   }
   async getAllServices() {
+    if (frontendDemoEnabled) return [];
     try {
       await mongoConnection.connect();
       const result = await AllRegistrationServiceTypeModel.find(

@@ -1,3 +1,7 @@
+import { applyFrontendDemoEnvironment } from "@/config/frontend-demo.cjs";
+
+applyFrontendDemoEnvironment();
+
 export const SENDER_EMAIL = process.env.SENDER_EMAIL;
 export const SENDER_EMAIL_PASSWORD = process.env.SENDER_EMAIL_PASSWORD;
 export const SMTP_HOST = process.env.SMTP_HOST;

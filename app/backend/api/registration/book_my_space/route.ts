@@ -12,8 +12,6 @@ import { RegistrationServiceType } from "@/app/backend/lib/db/models/all_registr
 import ErrorWithStatusCode from "@/app/_shared/custom-error/error-with-status-code";
 import JwtTokenService from "@/app/backend/lib/services/jwt-service";
 
-mongoConnection.connect();
-
 interface BookMySpaceRequestBody {
   name: string;
   about_expo?: string;
@@ -38,6 +36,7 @@ function generateTrackingId(prefix = "EXPO"): string {
 
 export async function POST(req: Request) {
   try {
+    await mongoConnection.connect();
     const json: BookMySpaceRequestBody = await req.json();
 
     const {

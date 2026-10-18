@@ -2,6 +2,9 @@
 import bundleAnalyzer from "@next/bundle-analyzer";
 import withSerwistInit from "@serwist/next";
 import { PUBLIC_ASSET_TRACING_GLOBS } from "./config/public-assets.cjs";
+import frontendDemo from "./config/frontend-demo.cjs";
+
+frontendDemo.applyFrontendDemoEnvironment();
 
 const withBundleAnalyzer = bundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
@@ -19,6 +22,9 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig = withSerwist({
+  env: {
+    FRONTEND_DEMO_MODE: frontendDemo.frontendDemoEnabled ? "true" : "false",
+  },
   outputFileTracingRoot: process.cwd(),
   eslint: {
     ignoreDuringBuilds: true,

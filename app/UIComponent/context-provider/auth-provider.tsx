@@ -50,6 +50,10 @@ export default function AuthProvider({
     redirect("/");
   };
   useEffect(() => {
+    if (process.env.FRONTEND_DEMO_MODE === "true") {
+      setLoaded(true);
+      return;
+    }
     if (true) {
       checkUserLoginStatus()
         .then((res) => {

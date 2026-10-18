@@ -41,9 +41,11 @@ function run({ variables = core, files = {}, nodeEnv = "production" } = {}) {
     for (const key of Object.keys(template)) delete env[key];
     delete env.__NEXT_PROCESSED_ENV;
     delete env.NODE_ENV;
+    env.FRONTEND_DEMO_MODE = "false";
     if (nodeEnv !== null) env.NODE_ENV = nodeEnv;
     for (const [key, value] of Object.entries(variables)) {
-      if (value !== undefined) env[key] = value;
+      if (value === undefined) delete env[key];
+      else env[key] = value;
     }
     env.TS_NODE_COMPILER_OPTIONS = JSON.stringify({
       module: "commonjs",
@@ -157,4 +159,17 @@ test("the documented template includes every required deployment key", () => {
   for (const key of Object.keys(core)) {
     assert.ok(Object.hasOwn(template, key), `env.example is missing ${key}`);
   }
+});
+
+test("frontend demo builds without any backend credentials", () => {
+  const result = run({ variables: { FRONTEND_DEMO_MODE: "true" } });
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /Frontend demo mode: using dummy credentials/);
+  assert.doesNotMatch(result.output, /Environment validation failed/);
+});
+
+test("a deployment defaults to frontend demo without extra Vercel settings", () => {
+  const result = run({ variables: { FRONTEND_DEMO_MODE: undefined } });
+  assert.equal(result.status, 0, result.output);
+  assert.match(result.output, /Frontend demo mode: using dummy credentials/);
 });

@@ -1,6 +1,7 @@
 // import { MONGODB_DB, MONGODB_URI } from "@/app/backend/config/constant";
 import { MONGODB_DB, MONGODB_URI } from "../../../config/constant";
 import mongoose from "mongoose";
+import { frontendDemoEnabled } from "@/config/frontend-demo.cjs";
 
 class MongoDBConnection {
   private static instance: MongoDBConnection;
@@ -22,6 +23,9 @@ class MongoDBConnection {
   }
 
   public async connect(): Promise<typeof mongoose> {
+    if (frontendDemoEnabled) {
+      throw new Error("Database access is disabled in frontend demo mode.");
+    }
     // Check if already connected
     if (mongoose.connection.readyState === 1) {
       return mongoose;

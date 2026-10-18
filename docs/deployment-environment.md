@@ -1,8 +1,21 @@
 # Deployment environment setup
 
-The prebuild check stops deployment when settings required by database, email,
-authentication, or browser payload encryption are absent. Do not use placeholder
-credentials or remove the check to get a deployment through.
+## Frontend demo (default)
+
+This checkout builds a frontend demo by default with dummy credentials. Run
+`yarn build`, or redeploy in Vercel, without adding database or secret values.
+If `FRONTEND_DEMO_MODE` is already configured in Vercel, set it to `true` for
+this preview. Public pages use the existing static content and assets.
+
+Database access, email, login, registration, booking submissions, CMS/AWS, and
+visitor tracking are disabled in this mode. Backend endpoints return an explicit
+demo message instead of pretending to save data. Admin and user routes redirect
+to the public homepage.
+
+## Enable the real backend
+
+Set `FRONTEND_DEMO_MODE=false` in Vercel (or `.env.local`). The prebuild check
+then requires the real settings below. Demo defaults do not apply in that mode.
 
 ## Vercel
 

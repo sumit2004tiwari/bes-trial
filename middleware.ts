@@ -34,6 +34,25 @@ function isAminPath(pathname) {
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
+  if (process.env.FRONTEND_DEMO_MODE === "true") {
+    const pathname = request.nextUrl.pathname;
+    if (
+      pathname === "/backend/api" || pathname.startsWith("/backend/api/") ||
+      pathname === "/api" || pathname.startsWith("/api/") ||
+      request.headers.has("next-action") ||
+      (request.method !== "GET" && request.method !== "HEAD")
+    ) {
+      return NextResponse.json(
+        { status: false, message: "This is a frontend demo. Backend features and form submissions are disabled." },
+        { status: 503 }
+      );
+    }
+    if (isProtectedPath(pathname)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+    return response;
+  }
+
   /* =====================================================
      STEP 1: Filter Out Non-Real Users
   ===================================================== */
@@ -98,7 +117,7 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  if (request.nextUrl.pathname.startsWith("/backend/api")) {
+  if (request.nextUrl.pathname.startsWith("/backend/api") || request.nextUrl.pathname.startsWith("/api/")) {
     return response;
   }
 
@@ -232,6 +251,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/backend/api/:path*",
+    "/api/:path*",
     "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|backend/api/auth|backend/api/track-visitor|api|.*\\.(?:pdf|png|jpg|jpeg|gif|svg|webp|ico|css|js|map|woff|woff2|ttf|eot|txt|xml|json)).*)",
   ],
 };
