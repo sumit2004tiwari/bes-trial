@@ -1,15 +1,13 @@
-import fs from "fs";
-import path from "path";
-import dotenv from "dotenv";
-const envFilePath = path.resolve(process.cwd(), ".env");
-if (fs.existsSync(envFilePath)) {
-  dotenv.config({ path: envFilePath });
-  console.log("✅ Loaded .env file");
-} else {
-  console.warn("⚠️ No .env file found");
-}
+import { loadEnvConfig } from "@next/env";
 
-// Check each required env variable
+// Match Next.js file precedence and preserve variables injected by Vercel.
+// `yarn build` runs this before Next.js sets NODE_ENV to production.
+const development = process.env.NODE_ENV === "development";
+const { loadedEnvFiles } = loadEnvConfig(process.cwd(), development);
+
+if (loadedEnvFiles.length > 0) {
+  console.log(`Loaded environment files: ${loadedEnvFiles.map((file) => file.path).join(", ")}`);
+}
 
 const requiredEnvs = [
   "SENDER_EMAIL",
@@ -19,8 +17,6 @@ const requiredEnvs = [
   "SMTP_PORT",
   "ADMIN_RECEIVER_MAIL",
   "enviroment",
-  "production_url",
-  "local_url",
   "TOKEN_SECRET_KEY",
   "SECRET_KEY",
   "MONGODB_URI",
@@ -29,15 +25,12 @@ const requiredEnvs = [
   "GENERAL_SECRET_KEY",
   "INTERNAL_SECRET",
   "NEXT_PUBLIC_SERVICE_SECRET",
-  "NEXT_PUBLIC_SERVICE_SECRET",
+  // A production deployment does not need a localhost URL.
+  development ? "local_url" : "production_url",
 ] as const;
-let missing = false;
-for (const key of requiredEnvs) {
-  if (!process.env[key]) {
-    console.error(`❌ Missing environment variable: ${key}`);
-    missing = true;
-  }
-}
+
+const hasValue = (key: string) => Boolean(process.env[key]?.trim());
+const missing: string[] = requiredEnvs.filter((key) => !hasValue(key));
 
 const contentfulEnvs = [
   "CONTENTFUL_SPACE_ID",
@@ -47,27 +40,25 @@ const contentfulEnvs = [
   "CONTENTFUL_PREVIEW_SECRET",
 ] as const;
 
-const hasAnyContentfulEnv = contentfulEnvs.some((key) => !!process.env[key]);
-if (hasAnyContentfulEnv) {
-  for (const key of contentfulEnvs) {
-    if (!process.env[key]) {
-      console.error(
-        `❌ Missing Contentful variable for partial setup: ${key}`
-      );
-      missing = true;
-    }
-  }
+if (contentfulEnvs.some(hasValue)) {
+  missing.push(...contentfulEnvs.filter((key) => !hasValue(key)));
 } else {
-  console.warn(
-    "ℹ️ Contentful env not set. CMS integration will stay disabled until configured."
-  );
+  console.log("Contentful is not configured; CMS integration is disabled.");
 }
 
-// Fail the build if any env is missing
-if (missing) {
-  throw new Error(
-    "Build failed: one or more required environment variables are missing."
+if (missing.length > 0) {
+  console.error(
+    [
+      "Environment validation failed. Missing required variables:",
+      ...missing.map((key) => `  - ${key}`),
+      "",
+      "Vercel: open Project Settings > Environment Variables and add these keys",
+      "for the deployment environment (Production or Preview), then redeploy.",
+      "Local: copy env.example to .env.local and fill in your actual values.",
+      "See docs/deployment-environment.md for setup instructions.",
+    ].join("\n")
   );
+  process.exitCode = 1;
+} else {
+  console.log("All required environment variables are set.");
 }
-
-console.log("✅ All required environment variables are set");
