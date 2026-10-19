@@ -1,6 +1,7 @@
 import type { ResourceButton } from "@/app/UIComponent/Carousel/HomePage/Notification";
 import type { AnnouncementItem, HomePageContent } from "./types";
 import { getHomepageContentfulEntry } from "./contentful-homepage-entry";
+import { mediaUrl, videoDefaults } from "./homepage-video";
 
 function getString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -86,7 +87,19 @@ export async function getContentfulHomepageContent(): Promise<HomePageContent | 
   const brochureButton = mapResourceButtonBase(
     fields?.brochure || fields?.broucher,
   );
+  const videoAsset = fields?.homepageVideo?.fields?.file;
+  const posterAsset = fields?.homepageVideoPoster?.fields?.file;
+  const captionsAsset = fields?.homepageVideoCaptions?.fields?.file;
+  const videoUrl = mediaUrl(videoAsset?.url || fields?.homepageVideoUrl);
   return {
+    ...(videoUrl ? { video: {
+      url: videoUrl,
+      title: getString(fields?.homepageVideoTitle) || videoDefaults.title,
+      description: getString(fields?.homepageVideoDescription) || videoDefaults.description,
+      poster: mediaUrl(posterAsset?.url) || videoDefaults.poster,
+      captionsUrl: mediaUrl(captionsAsset?.url),
+      contentType: ["video/mp4", "video/webm"].includes(videoAsset?.contentType) ? videoAsset.contentType : undefined,
+    } } : {}),
     announcementItems: mapAnnouncementItems(fields?.announcementItems),
     announcementsEnabled: getBoolean(fields?.announcementsEnabled),
     brochureButton,

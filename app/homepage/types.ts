@@ -14,6 +14,17 @@ export type HomePageContent = {
   announcementItems: AnnouncementItem[];
   notificationConfig: HomeNotificationCmsConfig | null;
   brochureButton?: ResourceButton;
+  video?: HomePageVideo;
+};
+
+export type HomePageVideo = {
+  url: string;
+  title: string;
+  description: string;
+  poster: string;
+  captionsUrl?: string;
+  contentType?: string;
+  aspectRatio?: number;
 };
 
 export type HomeCarouselSlide = {

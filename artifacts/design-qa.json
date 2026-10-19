@@ -1,8 +1,10 @@
 {
-  "passed": 75,
+  "passed": 78,
   "failed": 0,
   "checks": [
     "Desktop home loads without overflow",
+    "Film section sits immediately below the hero",
+    "Readable homepage body text and larger introduction",
     "Hero photo next and previous controls",
     "Keyboard-accessible desktop navigation",
     "Brochure document exists and opens",
@@ -62,6 +64,7 @@
     "Responsive home at 390px",
     "Responsive home at 768px",
     "Responsive home at 1024px",
+    "Responsive home at 1280px",
     "Mobile menu expands and navigates",
     "Mobile section navigation works",
     "Mobile route /about_bes/at_glance",

@@ -1,57 +1,52 @@
-# BES India website redesign
+# BES website design refinement
 
-The design serves broadcast engineers, media technology companies, exhibitors, conference delegates, and society members. It uses the existing BES identity and event photography, with navy, ivory, champagne, clear typography, and restrained interactions.
+The refinement keeps the existing BES identity, real event photographs, routes, and content sources. It gives the site the character of an established professional society: clear editorial headings, readable information, restrained colour, and space for the people and work behind broadcasting.
 
-## What changed
+## Design and content
 
-- A new homepage with an editorial hero, CMS-backed event information and photo controls, participation pathways, partner logos, society introduction, gallery, planning resources, and contact options.
-- Shared design tokens in `app/design-system.css` and a Material UI theme in `app/UIComponent/design/DesignProvider.tsx`.
-- Consistent page introductions, breadcrumbs, desktop sidebars, mobile section sheets, forms, tables, loading states, footer, and error states.
-- The standalone PWA offline fallback uses the same brand colors and accessible layout without depending on network-loaded styles or fonts.
-- Desktop navigation supports click, keyboard activation, Escape, outside-click dismissal, and focus restoration. Mobile navigation uses a drawer with expandable sections.
-- Registration CTAs follow existing MongoDB service status. Delegate registration now checks the delegate service rather than the visitor service.
-- Gallery filtering awaits Next.js search parameters, includes the existing 2026 photographs, and uses stable image layouts. Its keyboard-accessible photo viewer supports previous/next controls, arrow keys, Escape, and focus trapping.
-- Council contact links, membership contact spelling, relative brochure URLs, and malformed external links were corrected.
-- Historical detail pages and token-bearing badge URLs now await Next.js route parameters so they resolve their actual content and token rather than silently receiving undefined values.
-- Historical HTML preserves its content while resolving asset path capitalization and displaying clear fallbacks for missing photographs and documents. The unavailable 2024 report is hidden from navigation until its file is restored.
-- Sidebars hide inactive destinations; unavailable legacy event sections are no longer linked. The floor plan fits its content panel across tablet and desktop widths while retaining its zoom controls.
+- Georgia display headings paired with a native sans-serif reading face. Main body copy is 18px on desktop and 17px on mobile, with generous line spacing. Navigation, forms, sidebars, tables, and footer links have larger text as well.
+- Navy, warm ivory, and gold remain the shared palette. The decorative hero grid, photo overlays, floating slogan badge, and repeated participation cards have been removed.
+- The homepage follows a useful sequence: event introduction and dates, film, society news, participation information, supporters, the Society, the archive, visit planning, and contact details.
+- Participation is presented as numbered information rows. The gallery uses varied image proportions, while planning and contact links use simple ruled lists.
+- Homepage copy explains what visitors, delegates, and exhibitors can do. The Society introduction, EXPO background, participation information, conference theme, and attendance guide are more descriptive and easier to scan.
+- Shared page introductions, navigation, breadcrumbs, content panels, forms, gallery, and footer use the same reading hierarchy. Event dates and the official title still come from the existing homepage configuration. Registration links still follow existing service status.
 
-## Existing integrations
+## Homepage film
 
-The existing routes, forms, server actions, CMS/AWS data sources, authentication provider, analytics, PWA support, public PDFs, and business data remain in use. No demo registrations, invented testimonials, or replacement inventory were introduced.
+The supplied `public/besvideo.mp4` is connected immediately below the hero. It is a 46.4-second portrait film at 480 × 848 pixels, presented in a dedicated portrait layout so it stays readable without being cropped or squeezed into a wide player. The cover is a frame captured from the actual film.
 
-## Local verification
+The native player supports play/pause, seeking, volume, and fullscreen. It uses `playsInline`, does not autoplay, and uses `preload="none"`. It adapts to other source dimensions when metadata is available. A recoverable loading error includes retry and direct-file access.
 
-Use Node 22, matching `package.json`.
+Future updates can replace `public/besvideo.mp4`, set an optional direct media URL, or publish a video asset through the existing Contentful integration. See [the video setup guide](docs/homepage-video.md) for the exact fields, optional WebVTT captions, and deployment instructions.
+
+## Verification
+
+Use Node 22, matching `package.json`:
 
 ```powershell
-npm run typecheck
-npm run dev -- --port 3100
+npm run build
+node node_modules/next/dist/bin/next start -p 3100
 ```
 
 In another terminal:
 
 ```powershell
-npm run test:design
-npm run test:accessibility
+node scripts/design-qa.cjs
+node scripts/design-accessibility.cjs
+node scripts/homepage-video-qa.cjs
 ```
 
-The browser checks use local Chrome and the existing Playwright and axe-core installations. `BES_QA_URL` can select another local server; `BES_QA_BROWSER` can select another Chromium executable. Screenshots and JSON reports are written to `artifacts/`.
+The existing browser tools require Playwright, axe-core, and local Chrome. `BES_QA_URL` and `BES_QA_BROWSER` can override the preview URL and Chromium executable. Browser suites create no registrations, bookings, database records, or emails. They run in fresh browser profiles with the existing PWA enabled; comprehensive offline caching behaviour is outside their scope.
 
-The checks cover public routes, desktop and mobile overflow, navigation, gallery filtering/viewing, brochure delivery, signup validation, password visibility, login/recovery UI, and reduced motion. Browser checks create no registrations or database records and send no email.
+Reports and screenshots are written to `artifacts/`. The design suite checks public routes, responsive overflow from 320px through 1440px, typography, the film placement, navigation, gallery controls, brochure delivery, and form UI. The film suite checks the actual supplied MP4, byte-range delivery, playback, pause, seeking, and responsive proportions. The accessibility suite audits six pages at desktop and mobile widths.
 
-## Environment limitation
+This checkout defaults to frontend demo mode. A successful build and browser checks verify the frontend; they do not establish live MongoDB, SMTP, authentication, registration, or booking behaviour. Those services require real environment configuration and separate integration checks. No hosting deployment is part of this local design refinement.
 
-This checkout has no `.env` and lacks the MongoDB, SMTP, token, and service-secret settings required by `scripts/prebuild-check/validate-env.ts`. The ordinary `npm run build` correctly refuses to proceed without them. A direct Next.js framework build can verify compilation, type checking, and route generation, but does not verify service connectivity.
+## Verified result
 
-Successful live registration, account creation/login, OTP delivery, badge generation, exhibition booking, member approval, and authenticated admin operations still require those services and credentials. An inactive/unavailable registration state was checked; it must not be interpreted as evidence of a successful live submission.
-
-The user's pre-existing lockfile changes were retained.
-
-## Final verified result
-
-- Next.js framework build succeeded with Node 22.14.0, including compilation, TypeScript validation, and route generation. The command was `node node_modules/next/dist/bin/next build --no-lint`; the environment precheck was not bypassed inside the normal npm script or removed from the repository.
-- All 75 browser checks passed against the production preview, with no browser runtime or hydration errors. Responsive checks covered widths from 320px to 1440px.
-- All 12 automated accessibility audits reported zero WCAG A/AA violations: homepage, contact, council, signup, gallery, and standalone offline fallback at desktop and mobile widths. These are automated checks, not a claim of comprehensive accessibility certification.
-- Final screenshots were inspected, and `git diff --check` passed.
-- Evidence: `artifacts/design-qa.json`, `artifacts/accessibility-qa.json`, and the screenshots in `artifacts/`.
+- `npm run build` passed with Node 22.14.0, including environment validation in frontend demo mode, TypeScript checks, and all 79 generated pages.
+- The production preview passed all 78 browser regression checks with zero runtime or hydration errors. Responsive coverage includes 320, 390, 768, 1024, 1280, and 1440px widths.
+- The supplied MP4 passed all 9 video checks, including playback, pause, seeking, byte-range delivery, and uncropped responsive proportions.
+- All 12 automated WCAG A/AA accessibility audits reported zero violations. This is automated coverage, not comprehensive accessibility certification.
+- Desktop and mobile screenshots were visually inspected. `git diff --check` passed.
+- Evidence: `artifacts/design-qa.json`, `artifacts/accessibility-qa.json`, `artifacts/homepage-video-qa.json`, and the accompanying PNG screenshots.

@@ -1,19 +1,8 @@
 import type { Metadata } from "next";
-import { Poppins, Ubuntu } from "next/font/google";
 import "./globals.css";
 import "./design-system.css";
+import "./homepage/editorial.css";
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
-  variable: "--font-poppins",
-});
-
-const ubuntu = Ubuntu({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-ubuntu",
-});
 import Navbar from "./UIComponent/Navbar/Navbar";
 import Header1 from "./UIComponent/Navbar/Header1";
 import Footer from "./UIComponent/Footer/Footer";
@@ -160,7 +149,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>{ENVIROMENT === "production" && <NewRelicAnalytics />}</head>
-      <body className={`h-full overflow-hidden ${poppins.variable} ${ubuntu.variable}`}>
+      <body className="h-full overflow-hidden">
         <a href="#main-content" className="skip-link">Skip to main content</a>
         {/* <Suspense> */}
         <PwaRegister>
@@ -188,8 +177,8 @@ export default async function RootLayout({
         </PwaRegister>
         {/* </Suspense> */}
         {/* <AnnouncementModal /> */}
-        {ENVIROMENT === "production" && <Analytics />}
-        {ENVIROMENT === "production" && <SpeedInsights />}
+        {ENVIROMENT === "production" && process.env.VERCEL === "1" && <Analytics />}
+        {ENVIROMENT === "production" && process.env.VERCEL === "1" && <SpeedInsights />}
         {/* {ENVIROMENT === "production" && <DatadogProvider />} */}
         {/* {process.env.NODE_ENV === "production" && <InstallPrompt />} */}
       </body>

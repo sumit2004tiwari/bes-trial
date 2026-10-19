@@ -10,7 +10,7 @@ export default function Footer() {
   return <>
     <Toaster position="top-center" toastOptions={{ duration: 5000, style: { background: "#fff", color: "#142b45", borderRadius: 12 }, success: { duration: 5000 } }} />
     <footer className="site-footer"><div className="site-container">
-      <div className="footer-top"><div className="footer-brand"><Link href="/" aria-label="BES India home"><Image src="/Images/Logo/logo_new.png" alt="Broadcast Engineering Society India" width={320} height={89} sizes="225px" /></Link><p>Connecting the people and ideas<br />that move broadcasting forward.</p><span className="footer-since">Established in 1987 · New Delhi, India</span><SocialMediaFooter /></div>
+      <div className="footer-top"><div className="footer-brand"><Link href="/" aria-label="BES India home"><Image src="/Images/Logo/logo_new.png" alt="Broadcast Engineering Society India" width={320} height={89} sizes="225px" /></Link><p>A professional community for broadcast engineering, technical knowledge, and industry exchange.</p><span className="footer-since">Established in 1987 · New Delhi, India</span><SocialMediaFooter /></div>
         {footerData.map(item => <div className="footer-column" key={item.id}><h2>{item.name === "About Conference" ? "Conference" : item.name}</h2>{item.subTopic.map(link => {
           const dynamic = handleGetDynamicLink(link.id);
           const href = resourceUrl(dynamic || link.path);

@@ -1,9 +1,8 @@
 "use client";
-import { useFormState, useFormStatus } from "react-dom";
 
 import Form from "@/app/registrationform/Form/Form";
 import { Alert, Box } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { trackFormCompleted } from "@/lib/analytics";
 import { AnalyticsEvents } from "@/lib/analytics/events";
 const initialState = {
@@ -15,7 +14,7 @@ export default function FormWithAction({
   db,
   eventName = AnalyticsEvents.FEEDBACK_FORM_COMPLETED,
 }: any) {
-  const [state, formAction] = useFormState(formActionHandler, initialState);
+  const [state, formAction] = useActionState(formActionHandler, initialState);
   const formRef = useRef<HTMLFormElement|null>(null);
   const lastTrackedState = useRef<boolean>(false);
   const handleFormSubmit = (vistorDb: any, submitButtonRef: any) => {

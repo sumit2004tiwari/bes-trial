@@ -50,6 +50,28 @@ async function assertPage(page, route) {
   page.on('pageerror', error => runtimeErrors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && !message.text().includes('401 (Unauthorized)')) runtimeErrors.push(message.text()); });
   await check('Desktop home loads without overflow', () => assertPage(page, '/'));
+  await check('Film section sits immediately below the hero', async () => {
+    assert.equal(await page.locator('main .home-hero + .event-film').count(), 1);
+    const video = page.locator('main .event-film video');
+    if (await video.count()) {
+      assert.equal(await video.getAttribute('preload'), 'none');
+      assert.equal(await video.getAttribute('autoplay'), null);
+      assert.equal(await video.evaluate(el => el.controls && el.playsInline), true);
+    } else {
+      const photo = page.locator('main .film-player img');
+      await photo.scrollIntoViewIfNeeded();
+      await photo.evaluate(el => el.decode());
+      assert.ok(await photo.evaluate(el => el.naturalWidth > 0));
+      assert.equal(await page.locator('main .film-player button').count(), 0);
+    }
+    await page.locator('.inner_page').evaluate(el => el.scrollTo({ top: 0 }));
+  });
+  await check('Readable homepage body text and larger introduction', async () => {
+    const sizes = await page.locator('.homepage p').evaluateAll(els => els.map(el => parseFloat(getComputedStyle(el).fontSize)));
+    assert.ok(sizes.length > 10);
+    assert.ok(sizes.every(size => size >= 16), JSON.stringify(sizes));
+    assert.ok(await page.locator('main .hero-description').evaluate(el => parseFloat(getComputedStyle(el).fontSize) >= 17));
+  });
   await check('Hero photo next and previous controls', async () => {
     await page.waitForFunction(() => document.querySelectorAll('.hero-photo').length === 1);
     const original = await page.locator('.hero-photo').getAttribute('src');
@@ -80,7 +102,13 @@ async function assertPage(page, route) {
   await check('Signup validation prevents incomplete submissions', async () => { await page.locator('button[type=submit]').click(); assert.ok(await page.locator('.Mui-error').count() > 0); });
   await check('Signup password visibility toggle', async () => { const input = page.locator('input[name=password]'); await input.fill('test-value'); await page.getByRole('button', { name: 'Show password' }).click(); assert.equal(await input.getAttribute('type'), 'text'); await page.getByRole('button', { name: 'Hide password' }).click(); assert.equal(await input.getAttribute('type'), 'password'); });
   await screenshot(page, 'signup-desktop');
-  for (const width of [320, 390, 768, 1024]) { await page.setViewportSize({ width, height: 900 }); await check(`Responsive home at ${width}px`, () => assertPage(page, '/')); }
+  for (const width of [320, 390, 768, 1024, 1280]) { await page.setViewportSize({ width, height: 900 }); await check(`Responsive home at ${width}px`, async () => {
+    await assertPage(page, '/');
+    assert.ok(await page.locator('main .hero-description').evaluate(el => parseFloat(getComputedStyle(el).fontSize) >= 17));
+    const frame = await page.locator('main .film-player').evaluate(el => ({ ratio: el.clientWidth / el.clientHeight, expected: parseFloat(el.style.aspectRatio), width: el.clientWidth }));
+    assert.ok(Math.abs(frame.ratio - frame.expected) < .02);
+    assert.ok(frame.width <= width);
+  }); }
   await page.setViewportSize({ width: 390, height: 844 });
   await check('Mobile menu expands and navigates', async () => { await page.getByRole('button', { name: 'Open main menu', exact: true }).click(); await page.locator('.mobile-navigation summary').filter({ hasText: 'BES India' }).click(); await page.locator('.mobile-navigation').getByRole('link', { name: 'At a Glance' }).click(); await page.waitForURL('**/about_bes/at_glance'); await page.locator('.mobile-menu-paper').waitFor({ state: 'hidden' }); });
   await check('Mobile section navigation works', async () => { await page.getByRole('button', { name: 'Open Navigation', exact: true }).click(); await page.getByRole('button', { name: 'Close Navigation', exact: true }).waitFor(); await page.locator('.MuiDrawer-paper').getByRole('link', { name: 'Membership', exact: true }).click(); await page.waitForURL('**/about_bes/membership'); });

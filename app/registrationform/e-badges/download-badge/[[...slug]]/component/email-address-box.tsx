@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-import React, { FormEvent, useEffect } from "react";
-import { useFormState, useFormStatus } from "react-dom";
+import React, { FormEvent, useActionState, useEffect } from "react";
+import { useFormStatus } from "react-dom";
 
 const initialState = {
   message: "",
@@ -20,7 +20,7 @@ const initialState = {
 };
 export default function EmailAddressBox() {
   const router = useRouter();
-  const [state, formAction] = useFormState(getVisitorDetails, initialState);
+  const [state, formAction] = useActionState(getVisitorDetails, initialState);
   const [forceUpdate, setForceUpdate] = React.useState(false);
   const onChange = () => {
     state.message = "";

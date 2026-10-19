@@ -11,11 +11,11 @@
 }
 
 * {
-  font-family: var(--font-poppins), Poppins, sans-serif;
+  font-family: var(--font-body), "Segoe UI", Arial, sans-serif;
 }
 
 .ubuntu_font {
-  font-family: var(--font-ubuntu), Ubuntu, sans-serif;
+  font-family: var(--font-body), "Segoe UI", Arial, sans-serif;
 }
 
 .youtbue_thumbnail_conainer {

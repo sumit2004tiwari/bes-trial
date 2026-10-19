@@ -35,7 +35,7 @@ export default function UserProfile({
         <Button
           onClick={() => setIsOpen(true)}
           sx={{
-          fontFamily: "var(--font-poppins), Poppins, sans-serif",
+          fontFamily: 'var(--font-body), "Segoe UI", Arial, sans-serif',
           background: "#253b55",
           color: "white",
           fontWeight: 600,

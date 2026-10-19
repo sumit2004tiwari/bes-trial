@@ -93,6 +93,7 @@ http://localhost:3000/api/draft?secret=YOUR_SECRET&slug=/
 Homepage (`app/page.tsx`) reads one optional Contentful entry using these exact fields when `USECONTENTSTACK=true`:
 
 Root fields:
+- Optional homepage video fields are documented in [the video setup guide](docs/homepage-video.md).
 - `announcementsEnabled` (boolean)
 - `announcementItems` (array of objects)
 - `homepageBanner` (object)

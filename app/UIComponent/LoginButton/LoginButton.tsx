@@ -26,14 +26,14 @@ export default function LoginButton() {
       <Button
         onClick={() => setOpenLoginBox(true)}
         sx={{
-          fontFamily: "var(--font-poppins), Poppins, sans-serif",
+          fontFamily: 'var(--font-body), "Segoe UI", Arial, sans-serif',
           background: "#e5c38a",
           color: "#10243b",
           fontWeight: 600,
-          fontSize: "0.8rem",
+          fontSize: "1rem",
           px: 2,
           py: 1,
-          borderRadius: "8px",
+          borderRadius: "3px",
           textTransform: "none",
           whiteSpace: "nowrap",
           minWidth: 0,

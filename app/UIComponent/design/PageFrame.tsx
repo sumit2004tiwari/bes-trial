@@ -24,7 +24,7 @@ export default function PageFrame({ children }: { children: ReactNode }) {
   return <main id="main-content" tabIndex={-1} className="interior-page">
     <div className="page-intro"><div className="site-container">
       <nav aria-label="Breadcrumb" className="breadcrumbs"><Link href="/">Home</Link><span aria-hidden="true">/</span><span>{section}</span><span aria-hidden="true">/</span><span aria-current="page">{title}</span></nav>
-      <div className="eyebrow">Explore. Connect. Advance.</div><h1>{title}</h1><div className="page-intro-line" />
+      <div className="eyebrow">{section}</div><h1>{title}</h1><div className="page-intro-line" />
     </div></div>
     <div className="interior-body">{children}</div>
   </main>;

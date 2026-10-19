@@ -3,7 +3,7 @@ import { DYNAMIC_LINK } from "@/app/general/commonPath";
 import type { HomePageContent } from "./types";
 
 export function getStaticHomepageContent(): HomePageContent {
-  const subtitle = `${HOMEPAGE.expoStartDate.date}${HOMEPAGE.expoStartDate.postFix} ${HOMEPAGE.expoStartDate.displayMonth} to ${HOMEPAGE.expoEndDate.date}${HOMEPAGE.expoEndDate.postFix} ${HOMEPAGE.expoEndDate.displayMonth} ${HOMEPAGE.expoEndDate.year}`;
+  const subtitle = `${HOMEPAGE.expoStartDate.date}–${HOMEPAGE.expoEndDate.date} ${HOMEPAGE.expoEndDate.displayMonth} ${HOMEPAGE.expoEndDate.year}`;
   const countdownStartDateTime = `${HOMEPAGE.expoStartDate.month} ${HOMEPAGE.expoStartDate.date} , ${HOMEPAGE.expoStartDate.year} 10:00:00 GMT+0530`;
 
   return {
@@ -22,7 +22,7 @@ export function getStaticHomepageContent(): HomePageContent {
       title: `BES EXPO-2027: ${HOMEPAGE.eventCount} International Conference & Exhibition on Broadcast & Media Technology`,
       subtitle,
       venue: "Hall No. 12A, Bharat Mandapam, New Delhi", // Hall No. 12A Pragati Maidan, New Delhi
-      theme: "Theme: Reimagining Media: Intelligent, Innovative & Indigenous “Shaping Media for a Connected World", //Theme: Make in India for the World
+      theme: "Theme: Reimagining Media: Intelligent, Innovative & Indigenous — Shaping Media for a Connected World",
       primaryButtonLink:
         "/event_conference/bes_expo/exibition/participation_fee",
       countdownStartDateTime,

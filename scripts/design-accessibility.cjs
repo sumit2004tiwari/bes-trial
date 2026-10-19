@@ -8,7 +8,13 @@ const fs = require('fs');
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: 1000 });
     for (const route of ['/', '/about_bes/contact_us', '/about_bes/executive_council', '/member_signup', '/galleries/pictures', '/offline.html']) {
-    await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 180000 });
+    for (let attempt = 0; ; attempt++) {
+      try { await page.goto(`${base}${route}`, { waitUntil: 'networkidle', timeout: 180000 }); break; }
+      catch (error) {
+        // The PWA may reload once when its initial worker takes control.
+        if (attempt >= 2 || !/ERR_ABORTED|ERR_NETWORK_CHANGED/.test(error.message)) throw error;
+      }
+    }
     await page.addScriptTag({ path: require.resolve('axe-core') });
     const result = await page.evaluate(async () => axe.run(document.querySelector('main'), { runOnly: { type: 'tag', values: ['wcag2a', 'wcag2aa', 'wcag21aa'] } }));
     const violations = result.violations.map(item => ({ id: item.id, impact: item.impact, description: item.description, nodes: item.nodes.map(node => ({ target: node.target, html: node.html, summary: node.failureSummary })) }));
